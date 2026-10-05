@@ -5,15 +5,12 @@ import org.openqa.selenium.WebDriver;
 
 import com.hrm.actionDriver.ActionDriver;
 import com.hrm.baseClass.BaseClass;
+import com.hrm.baseClass.BasePage;
 import com.hrm.driver.DriverFactory;
 import com.hrm.utilities.WaitUtils;
 
-public class LoginPage {
+public class LoginPage extends BasePage {
 
-	
-	private WebDriver driver;
-	private WaitUtils waitUtils;
-	private ActionDriver actionDriver;
 	
 	// Locators 
 	private By username = By.name("username");
@@ -22,16 +19,7 @@ public class LoginPage {
 	private By errorMsg = By.xpath("//p[text()= 'Invalid credentials']");
 	private By requiredError = By.xpath("//span[text()= 'Required']");
 	private By loginText = By.xpath("//h5[text()= 'Login']");
-		
 	
-	public LoginPage() {
-		
-		this.driver = DriverFactory.getDriver();
-		
-		this.waitUtils = new WaitUtils(driver);
-		
-		this.actionDriver = new ActionDriver(driver);
-	}
 	
 	public void enterUserName(String usernameValue) {
 		actionDriver.enterText(username, usernameValue);

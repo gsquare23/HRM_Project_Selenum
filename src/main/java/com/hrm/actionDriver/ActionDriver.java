@@ -1,4 +1,6 @@
-package com.hrm.actionDriver;
+ package com.hrm.actionDriver;
+
+import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -57,6 +59,25 @@ public class ActionDriver {
 	
 	public void navigateBack() {
 		driver.navigate().back();
+	}
+	
+	
+	
+	public void selectValueFromList(By by, String menuValue) {
+		 waitUtils.waitForElementVisible(by);
+		 
+		 List<WebElement> values = driver.findElements(by);
+		 
+		 for(WebElement value : values) {
+			  if(value.getText().equalsIgnoreCase(menuValue)) {
+				  value.click();
+				  break;
+			  }
+			  else {
+				  System.out.println("Unable to find menu value " + menuValue);
+			  }
+		 }
+		
 	}
 
 	// Method to get the description of an Element
