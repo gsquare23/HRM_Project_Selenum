@@ -71,12 +71,13 @@ public class ActionDriver {
 		 for(WebElement value : values) {
 			  if(value.getText().equalsIgnoreCase(menuValue)) {
 				  value.click();
-				  break;
-			  }
-			  else {
-				  System.out.println("Unable to find menu value " + menuValue);
+				  return;
 			  }
 		 }
+		 
+		 throw new RuntimeException(
+		            "Unable to find menu value: " + menuValue);
+
 		
 	}
 

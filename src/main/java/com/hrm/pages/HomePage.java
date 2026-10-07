@@ -3,13 +3,9 @@ package com.hrm.pages;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.hrm.actionDriver.ActionDriver;
 import com.hrm.baseClass.BasePage;
-import com.hrm.driver.DriverFactory;
-import com.hrm.utilities.WaitUtils;
 
 public class HomePage extends BasePage  {
 	
@@ -69,17 +65,14 @@ public class HomePage extends BasePage  {
     public boolean menuVerification(String menuValue) {
     	actionDriver.selectValueFromList(dashboardMenus, menuValue);
     	
-    	actionDriver.isDisplayed(menuHeader);
+        if (!actionDriver.isDisplayed(menuHeader)) {
+            return false;
+        }
     	
     	String menuText = driver.findElement(menuHeader).getText();
     	
-    	if(menuText.equalsIgnoreCase(menuValue)) {
-    		return true;
-    	}
+    	return (menuText.equalsIgnoreCase(menuValue));	 
     	
-    	else {
-    		return false;
-    	}
     }
 
 }

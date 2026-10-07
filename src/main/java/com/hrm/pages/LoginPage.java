@@ -1,13 +1,7 @@
 package com.hrm.pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-
-import com.hrm.actionDriver.ActionDriver;
-import com.hrm.baseClass.BaseClass;
 import com.hrm.baseClass.BasePage;
-import com.hrm.driver.DriverFactory;
-import com.hrm.utilities.WaitUtils;
 
 public class LoginPage extends BasePage {
 
