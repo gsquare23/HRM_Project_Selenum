@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import com.hrm.baseClass.BasePage;
+import com.hrm.basePage.BasePage;
 
 public class HomePage extends BasePage  {
 	
@@ -45,15 +44,8 @@ public class HomePage extends BasePage  {
     
     
     public boolean menuDisplayed() {
-    	List<WebElement> menus= driver.findElements(dashboardMenus);
-    	
-    	if(menus.size() == 12) {
-    		return true;
-    	}
-    	else{
-    		return false;
-    	}
-    	
+    	  List<WebElement> menus = driver.findElements(dashboardMenus);
+    	    return menus.size() == 12;
     }
     
     

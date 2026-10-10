@@ -26,6 +26,7 @@ public class ActionDriver {
 		WebElement element = driver.findElement(by);
 
 	    element.clear();
+	    
 	    element.sendKeys(value);
 
 		System.out.println("Entered text: " + getElementDescription(by) + "--->" + value);
@@ -56,6 +57,18 @@ public class ActionDriver {
 	    }
 	}
 	
+	
+	
+	public boolean isInvisible(By by) {
+		try {
+			waitUtils.waitForElementInvisible(by);
+			
+			return true;
+		} catch (Exception e) {
+		
+			return false;
+		}
+	}
 	
 	public void navigateBack() {
 		driver.navigate().back();

@@ -1,4 +1,4 @@
-package com.hrm.baseClass;
+package com.hrm.basePage;
 
 import org.openqa.selenium.WebDriver;
 

@@ -1,7 +1,9 @@
 package com.hrm.pages;
 
 import org.openqa.selenium.By;
-import com.hrm.baseClass.BasePage;
+
+import com.hrm.basePage.BasePage;
+
 
 public class LoginPage extends BasePage {
 
@@ -42,16 +44,15 @@ public class LoginPage extends BasePage {
 	
 	
 	public boolean isPasswordMasked() {
-		actionDriver.isDisplayed(password);
-		
-		String flag = driver.findElement(password).getAttribute("type");
-		
-		if(flag.equals("password")) {
-			return true;
-		}
-		else {
-			return false;
-		}
+
+	    if (!actionDriver.isDisplayed(password)) {
+	        return false;
+	    }
+
+	    String type = driver.findElement(password)
+	            .getAttribute("type");
+
+	    return "password".equalsIgnoreCase(type);
 	}
 	
 	

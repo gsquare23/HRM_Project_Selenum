@@ -26,7 +26,8 @@ public class HomePageTest extends BaseClass{
 	}
 	
 	
-	@Test(description = "Verify Dashboard is displayed after login --- Smoke")
+	@Test(description = "Verify Dashboard is displayed after successful login",
+		    groups = {"Smoke", "Regression"})
 	public void verifyDashboardIsDisplayedAfterLogin() {
 		loginPage.login("admin", "admin123");
 		
@@ -36,7 +37,10 @@ public class HomePageTest extends BaseClass{
 		
 	}
 	
-	@Test(description = "Verify main menu is displayed --- UI")
+	@Test(
+		    description = "Verify main menu is displayed on Dashboard",
+		    groups = {"UI", "Regression"}
+		)
 	public void verifyMainMenuIsDisplayed() {
 		loginPage.login("admin", "admin123");
 		
@@ -58,28 +62,34 @@ public class HomePageTest extends BaseClass{
 	}
 	
 	
-	@Test(description = "Verify Admin menu --- Functional")
+	@Test(
+		    description = "Verify user can navigate to Admin menu",
+		    groups = {"Functional", "Regression"}
+		)
 	public void verifyNavigationToAdminMenu() {
 		loginPage.login("admin", "admin123");
-		homePage.menuVerification("Admin");
+		Assert.assertTrue(
+	            homePage.menuVerification("Admin"),
+	            "Admin menu navigation failed"
+	    );
 	}
 	
 	@Test(description = "Verify navigation to PIM --- Functional")
 	public void verifyNavigationToPIMMenu() {
 		loginPage.login("admin", "admin123");
-		homePage.menuVerification("PIM");
+		Assert.assertTrue(homePage.menuVerification("PIM"));
 	}
 	
 	@Test(description = "Verify navigation to Leave --- Functional")
 	public void verifyNavigationToLeaveMenu() {
 		loginPage.login("admin", "admin123");
-		homePage.menuVerification("Leave");
+		Assert.assertTrue(homePage.menuVerification("Leave"));
 	}
 	
 	@Test(description = "Verify navigation to Time --- Functional")
 	public void verifyNavigationToTimeMenu() {
 		loginPage.login("admin", "admin123");
-		homePage.menuVerification("Time");
+		Assert.assertTrue(homePage.menuVerification("Time"));
 	}
 	
 	
