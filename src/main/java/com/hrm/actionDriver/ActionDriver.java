@@ -1,10 +1,13 @@
  package com.hrm.actionDriver;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.hrm.utilities.WaitUtils;
 
@@ -21,27 +24,36 @@ public class ActionDriver {
 	// method to enter Text
 
 	public void enterText(By by, String value) {
-		waitUtils.waitForElementVisible(by);
-
-		WebElement element = driver.findElement(by);
+		WebElement element = waitUtils.waitForElementVisible(by);
 
 	    element.clear();
 	    
 	    element.sendKeys(value);
-
-		System.out.println("Entered text: " + getElementDescription(by) + "--->" + value);
-
 	}
 
-	// Method to click an element
+	// Click an element safely if the DOM refreshes
 	public void click(By by) {
-		waitUtils.waitForElementClickable(by);
 
-		WebElement element = driver.findElement(by);
+	    StaleElementReferenceException lastException = null;
 
-	    element.click();
+	    for (int attempt = 1; attempt <= 3; attempt++) {
+	        try {
+	            WebElement element = waitUtils.waitForElementClickable(by);
+	            element.click();
+	            return;
+
+	        } catch (StaleElementReferenceException e) {
+	            lastException = e;
+
+	            System.out.println(
+	                "Element became stale. Retrying click: "
+	                + by + " | Attempt: " + attempt
+	            );
+	        }
+	    }
+
+	    throw lastException;
 	}
-	
 	
 	public boolean isDisplayed(By by) {
 
@@ -49,7 +61,7 @@ public class ActionDriver {
 
 	        waitUtils.waitForElementVisible(by);
 
-	        return driver.findElement(by).isDisplayed();
+	        return true;
 
 	    } catch (Exception e) {
 
@@ -61,9 +73,7 @@ public class ActionDriver {
 	
 	public boolean isInvisible(By by) {
 		try {
-			waitUtils.waitForElementInvisible(by);
-			
-			return true;
+			return waitUtils.waitForElementInvisible(by);
 		} catch (Exception e) {
 		
 			return false;
@@ -74,24 +84,37 @@ public class ActionDriver {
 		driver.navigate().back();
 	}
 	
-	
-	
-	public void selectValueFromList(By by, String menuValue) {
-		 waitUtils.waitForElementVisible(by);
-		 
-		 List<WebElement> values = driver.findElements(by);
-		 
-		 for(WebElement value : values) {
-			  if(value.getText().equalsIgnoreCase(menuValue)) {
-				  value.click();
-				  return;
-			  }
-		 }
-		 
-		 throw new RuntimeException(
-		            "Unable to find menu value: " + menuValue);
 
-		
+	public void pageRefresh() {
+		driver.navigate().refresh();
+	}
+	
+	public void selectValueFromList(By locator, String value) {
+
+	    WebDriverWait wait =
+	            new WebDriverWait(driver, Duration.ofSeconds(10));
+
+	    wait.until(d -> {
+	        List<WebElement> elements = d.findElements(locator);
+
+	        for (WebElement element : elements) {
+	            try {
+	                if (element.isDisplayed()
+	                        && element.getText().trim()
+	                                .equalsIgnoreCase(value)) {
+
+	                    if (element.isEnabled()) {
+	                        element.click();
+	                        return true;
+	                    }
+	                }
+	            } catch (StaleElementReferenceException e) {
+	                // DOM changed; fetch fresh elements on next poll
+	            }
+	        }
+
+	        return false;
+	    });
 	}
 
 	// Method to get the description of an Element

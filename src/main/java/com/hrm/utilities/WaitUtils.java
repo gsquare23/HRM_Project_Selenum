@@ -2,6 +2,7 @@ package com.hrm.utilities;
 
 import java.time.Duration;
 
+import org.jspecify.annotations.NonNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,12 +11,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WaitUtils {
 	
-	private WebDriver driver; 
 	private WebDriverWait wait;
 	
 	public WaitUtils(WebDriver driver) {
-		
-		this.driver = driver;
 		
 		int timeOut = Integer.parseInt(ConfigReader.getProperty("explicitWait"));
 		
@@ -23,17 +21,17 @@ public class WaitUtils {
 	
 	}
 	
-	public void waitForElementVisible(By by) {
-		wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+	public WebElement waitForElementVisible(By by) {
+		return (wait.until(ExpectedConditions.visibilityOfElementLocated(by)));
 	}
 	
 	
-	public void waitForElementClickable(By by) {
-		wait.until(ExpectedConditions.elementToBeClickable(by));
+	public WebElement waitForElementClickable(By by) {
+		return (wait.until(ExpectedConditions.elementToBeClickable(by)));
 	}
 	
-	public void waitForElementInvisible(By by) {
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
+	public boolean waitForElementInvisible(By by) {
+		return (wait.until(ExpectedConditions.invisibilityOfElementLocated(by)));
 	}
 	
 	public void waitForTitleContains(String title) {

@@ -1,62 +1,99 @@
+
 package com.hrm.driver;
 
-import com.hrm.utilities.ConfigReader;
+import java.util.Locale;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 
-public class DriverFactory {
+import com.hrm.utilities.ConfigReader;
 
-    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+public final class DriverFactory {
+
+    private static final ThreadLocal<WebDriver> driver =
+            new ThreadLocal<>();
+
+    private DriverFactory() {
+        // Prevent object creation
+    }
 
     public static void initializeDriver() {
 
+        // Clean up any existing driver on this thread.
+        quitDriver();
+
         String browser = ConfigReader.getProperty("browser");
+
+        if (browser == null || browser.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Browser is not configured in config.properties");
+        }
+
+        browser = browser.trim().toLowerCase(Locale.ROOT);
+
         boolean headless = Boolean.parseBoolean(
                 ConfigReader.getProperty("headless"));
 
         WebDriver webDriver;
 
-        switch (browser.toLowerCase()) {
+        switch (browser) {
 
-        case "chrome":
+            case "chrome":
+                ChromeOptions chromeOptions = new ChromeOptions();
 
-            ChromeOptions chromeOptions = new ChromeOptions();
+                if (headless) {
+                    chromeOptions.addArguments("--headless=new");
+                    chromeOptions.addArguments("--window-size=1920,1080");
+                }
 
-            if (headless) {
-                chromeOptions.addArguments("--headless=new");
-            }
+                webDriver = new ChromeDriver(chromeOptions);
+                break;
 
-            webDriver = new ChromeDriver(chromeOptions);
+            case "firefox":
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
 
-            break;
+                if (headless) {
+                    firefoxOptions.addArguments("-headless");
+                }
 
-        case "firefox":
+                webDriver = new FirefoxDriver(firefoxOptions);
+                break;
 
-            webDriver = new FirefoxDriver();
+            case "edge":
+                EdgeOptions edgeOptions = new EdgeOptions();
 
-            break;
+                if (headless) {
+                    edgeOptions.addArguments("--headless=new");
+                }
 
-        case "edge":
+                webDriver = new EdgeDriver(edgeOptions);
+                break;
 
-            webDriver = new EdgeDriver();
-
-            break;
-
-        default:
-
-            throw new IllegalArgumentException(
-                    "Unsupported browser: " + browser);
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported browser: " + browser);
         }
 
+        // Associate this browser with the current thread.
         driver.set(webDriver);
 
-        // Maximize only when NOT running headless
-        if (!headless) {
-            getDriver().manage().window().maximize();
+        try {
+            if (!headless) {
+                webDriver.manage().window().maximize();
+            }
+        } catch (RuntimeException e) {
+            try {
+                webDriver.quit();
+            } finally {
+                driver.remove();
+            }
+
+            throw e;
         }
     }
 
@@ -66,9 +103,13 @@ public class DriverFactory {
 
     public static void quitDriver() {
 
-        if (driver.get() != null) {
+        WebDriver webDriver = driver.get();
 
-            driver.get().quit();
+        try {
+            if (webDriver != null) {
+                webDriver.quit();
+            }
+        } finally {
             driver.remove();
         }
     }

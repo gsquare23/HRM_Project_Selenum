@@ -17,6 +17,7 @@ public class LoginPage extends BasePage {
 	private By loginText = By.xpath("//h5[text()= 'Login']");
 	
 	
+	
 	public void enterUserName(String usernameValue) {
 		actionDriver.enterText(username, usernameValue);
 	}
@@ -62,6 +63,10 @@ public class LoginPage extends BasePage {
 	
 	public void navigateBack() {
 		actionDriver.navigateBack();
+	}
+	
+	public void pageRefresh() {
+		actionDriver.pageRefresh();
 	}
 }
 

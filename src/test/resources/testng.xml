@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="HRM Test Suite">
+<suite name="HRM Master Suite">
 
-    <test name="Login Tests">
-        <classes>
-            <class name="com.hrm.tests.LoginPageTest"/>
-        </classes>
-    </test>
+    <suite-files>
+        <suite-file path="testng_parallel.xml"/>
+        <suite-file path="testng_sequentialTests.xml"/>
+    </suite-files>
 
 </suite>

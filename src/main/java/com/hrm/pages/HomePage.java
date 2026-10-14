@@ -19,10 +19,8 @@ public class HomePage extends BasePage  {
 	public boolean isDashboardDisplayed() {
 		
 		try {
-			waitUtils.waitForElementVisible(dashboardHeader);
-
-			return driver.findElements(dashboardHeader)
-			        .size() > 0;
+			return actionDriver.isDisplayed(dashboardHeader);
+			
 		} catch (Exception e) {
 			return false;
 		}
@@ -30,7 +28,7 @@ public class HomePage extends BasePage  {
 
     public String getDashboardTitle() {
 
-        waitUtils.waitForElementVisible(dashboardHeader);
+    	actionDriver.isDisplayed(dashboardHeader);
 
         return driver.findElement(
                 dashboardHeader).getText();

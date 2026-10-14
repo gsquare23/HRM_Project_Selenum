@@ -1,4 +1,3 @@
-
 package com.hrm.tests;
 
 import java.lang.reflect.Method;
@@ -11,105 +10,187 @@ import com.hrm.baseClass.BaseClass;
 import com.hrm.pages.AdminPage;
 import com.hrm.pages.HomePage;
 import com.hrm.pages.LoginPage;
+import com.hrm.testUtilities.DataProviders;
 import com.hrm.utilities.ConfigReader;
+import com.hrm.utilities.ExtentManager;
 
 public class AdminPageTest extends BaseClass {
 
-    private LoginPage loginPage;
-    private HomePage homePage;
-    private AdminPage adminPage;
+	private LoginPage loginPage;
+	private HomePage homePage;
+	private AdminPage adminPage;
 
-    @BeforeMethod
-    public void setupPages(Method method) {
-        loginPage = new LoginPage();
-        homePage = new HomePage();
-        adminPage = new AdminPage();
+	@BeforeMethod
+	public void setupPages(Method method) {
 
-        System.out.println(
-            "Currently executing test case: " + method.getName()
-        );
-    }
+		loginPage = new LoginPage();
+		homePage = new HomePage();
+		adminPage = new AdminPage();
 
-    @Test(description = "Verify navigation to Admin page")
-    public void verifyNavigationToAdminPage() {
-        loginPage.login("admin", "admin123");
+		System.out.println("Currently executing test case: " + method.getName() + " | Thread: "
+				+ Thread.currentThread().getName());
+	}
 
-        Assert.assertTrue(
-            homePage.menuVerification("Admin"),
-            "Admin menu navigation failed"
-        );
-    }
+	/**
+	 * Logs in using credentials supplied by the DataProvider and opens the Admin
+	 * page.
+	 */
+	private void openAdminPage(String loginUsername, String loginPassword) {
 
-    @Test(description = "Verify adding new admin user", priority = 1)
-    public void verifyAddingNewAdminUser() throws InterruptedException {
-        loginPage.login("admin", "admin123");
-        homePage.menuVerification("Admin");
+		ExtentManager.getTest().info("Starting login");
 
-        adminPage.addNewAdminUSer(
-            ConfigReader.getProperty("employerName"),
-            ConfigReader.getProperty("newUsername"),
-            ConfigReader.getProperty("password")
-        );
+		loginPage.login(loginUsername, loginPassword);
 
-        homePage.menuVerification("Admin");
+		ExtentManager.getTest().info("Navigating to Admin page");
 
-        Assert.assertTrue(
-            adminPage.verifyUserAdded(
-                ConfigReader.getProperty("newUsername")
-            ),
-            "New admin user was not found"
-        );
-    }
+		boolean adminPageOpened = homePage.menuVerification("Admin");
 
-    @Test(description = "Verify deleting admin user with Yes",priority = 4)
-    public void deleteNewAddedUser() {
-        loginPage.login("admin", "admin123");
-        homePage.menuVerification("Admin");
+		Assert.assertTrue(adminPageOpened, "Unable to navigate to Admin page");
 
-        adminPage.deleteUserWithYes(ConfigReader.getProperty("newUsername"));
-    }
+		ExtentManager.getTest().pass("Successfully navigated to Admin page");
+	}
 
-    @Test(description = "Verify cancelling user deletion with No", priority = 3)
-    
-    public void cancelDeleteNewAddedUser() {
-        loginPage.login("admin", "admin123");
-        homePage.menuVerification("Admin");
-        
-        adminPage.deleteUserWithNo(ConfigReader.getProperty("newUsername"));
-    }
-    
-    
-    @Test(description = "Verify Search user by username",priority = 2)    
-    		
-    public void searchUserWithUsername() {
-    	loginPage.login("admin", "admin123");
-    	homePage.menuVerification("Admin");
-    	
-    	adminPage.seachUserWithUsername(ConfigReader.getProperty("newUsername"));
-    }
-    
-    @Test(description = "Search user by role",priority = 2 )
-    public void searchUserWithUserRole() {
-    	loginPage.login("admin", "admin123");
-    	homePage.menuVerification("Admin");
-    	
-    	adminPage.searchUserWithUserRole(ConfigReader.getProperty("newUsername"));
-    }
-    
-    
-    @Test(description = "Search user by Employee Name", priority = 2)
-    public void searchUserWithEmployeeName() {
-     	loginPage.login("admin", "admin123");
-    	homePage.menuVerification("Admin");
-    	
-    	adminPage.searchUserWithEmployeeName(ConfigReader.getProperty("employerName"));
-    }
-    @Test(description = "Search user by status", priority = 2)
-    public void searchUserWithStatus() {
-    	loginPage.login("admin", "admin123");
-    	homePage.menuVerification("Admin");
-    	
-    	adminPage.searchUserWithStatus(ConfigReader.getProperty("newUsername"));
-    }
-    
+	/**
+	 * Uses validLoginData from DataProviders for login credentials.
+	 */
+
+	@Test(description = "Verify navigation to Admin page", groups = { "Smoke",
+			"Regression" }, dataProvider = "validLoginData", dataProviderClass = DataProviders.class)
+	public void verifyNavigationToAdminPage(String loginUsername, String loginPassword) {
+
+		openAdminPage(loginUsername, loginPassword);
+
+		ExtentManager.getTest().pass("Admin page navigation verified successfully");
+	}
+
+	@Test(description = "Verify adding new admin user", groups = { "Functional", "Regression" },
+			dataProvider = "validLoginData", dataProviderClass = DataProviders.class, priority = 1)
+
+	public void verifyAddingNewAdminUser(String loginUsername, String loginPassword) {
+
+		ExtentManager.getTest().info("Starting add admin user test");
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String username = ConfigReader.getProperty("newUsername");
+		String employerName = ConfigReader.getProperty("employerName");
+		String newUserPassword = ConfigReader.getProperty("newUserpassword");
+
+		adminPage.addNewAdminUSer(employerName, username, newUserPassword);
+
+		Assert.assertTrue(adminPage.isSuccessMessageDisplayed(),
+				"Success message was not displayed after adding the user");
+
+		boolean adminPageOpened = homePage.menuVerification("Admin");
+
+		Assert.assertTrue(adminPageOpened, "Unable to return to Admin page after adding user");
+
+		Assert.assertTrue(adminPage.verifyUserAdded(username), "Newly created user was not found: " + username);
+
+		ExtentManager.getTest().pass("New admin user was added and verified successfully");
+	}
+
+	@Test(description = "Verify deleting admin user with Yes", groups = { "Functional", "Regression" },
+			dataProvider = "validLoginData", dataProviderClass = DataProviders.class, priority = 4)
+	public void deleteNewAddedUser(String loginUsername, String loginPassword) {
+
+		ExtentManager.getTest().info("Starting delete admin user test");
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String username = ConfigReader.getProperty("newUsername");
+
+		adminPage.deleteUserWithYes(username);
+
+		Assert.assertFalse(adminPage.isUserPresent(username), "User should not exist after deletion: " + username);
+
+		ExtentManager.getTest().pass("User was successfully deleted and verified");
+	}
+
+	@Test(description = "Verify cancelling user deletion with No", groups = { "Functional", "Regression" }, 
+				dataProvider = "validLoginData", dataProviderClass = DataProviders.class, priority = 3)
+	public void cancelDeleteNewAddedUser(String loginUsername, String loginPassword) {
+
+		ExtentManager.getTest().info("Starting cancel deletion test");
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String username = ConfigReader.getProperty("newUsername");
+
+		adminPage.deleteUserWithNo(username);
+
+		Assert.assertTrue(adminPage.isUserPresent(username),
+				"User should still exist after cancelling deletion: " + username);
+
+		ExtentManager.getTest().pass("Deletion was cancelled and the user remains present");
+	}
+
+	@Test(description = "Verify search user by username", groups = { "Functional",
+			"Regression" }, dataProvider = "validLoginData", dataProviderClass = DataProviders.class, priority = 2)
+	public void searchUserWithUsername(String loginUsername, String loginPassword) {
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String username = ConfigReader.getProperty("newUsername");
+
+		adminPage.searchUserWithUsername(username);
+
+		Assert.assertTrue(adminPage.areSearchResultsDisplayed(), "Search result count was not displayed");
+
+		Assert.assertTrue(adminPage.isUserPresent(username), "Expected user was not found: " + username);
+
+		ExtentManager.getTest().pass("Username search operation completed successfully");
+	}
+
+	@Test(description = "Verify search user by role", groups = { "Functional",
+			"Regression" }, dataProvider = "validLoginData", dataProviderClass = DataProviders.class,priority = 2)
+	public void searchUserWithUserRole(String loginUsername, String loginPassword) {
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String username = ConfigReader.getProperty("newUsername");
+
+		adminPage.searchUserWithUserRole(username);
+
+		Assert.assertTrue(adminPage.areSearchResultsDisplayed(), "Search result count was not displayed");
+
+		Assert.assertTrue(adminPage.isUserPresent(username), "Expected user was not found: " + username);
+
+		ExtentManager.getTest().pass("User-role search operation completed successfully");
+	}
+
+	@Test(description = "Verify search user by Employee Name", groups = { "Functional",
+			"Regression" }, dataProvider = "validLoginData", dataProviderClass = DataProviders.class, priority = 2)
+	public void searchUserWithEmployeeName(String loginUsername, String loginPassword) {
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String employerName = ConfigReader.getProperty("employerName");
+
+		adminPage.searchUserWithEmployeeName(employerName);
+
+		Assert.assertTrue(adminPage.areSearchResultsDisplayed(), "Search result count was not displayed");
+
+		Assert.assertTrue(adminPage.isEmployerRowPresent(employerName),
+				"Unable to find employee name in search results: " + employerName);
+
+		ExtentManager.getTest().pass("Employee-name search operation completed successfully");
+	}
+
+	@Test(description = "Verify search user by status", groups = { "Functional",
+			"Regression" }, dataProvider = "validLoginData", dataProviderClass = DataProviders.class, priority = 2)
+	public void searchUserWithStatus(String loginUsername, String loginPassword) {
+
+		openAdminPage(loginUsername, loginPassword);
+
+		String username = ConfigReader.getProperty("newUsername");
+
+		adminPage.searchUserWithStatus(username);
+
+		Assert.assertTrue(adminPage.areSearchResultsDisplayed(), "Search result count was not displayed");
+
+		Assert.assertTrue(adminPage.isUserPresent(username), "Expected user was not found: " + username);
+
+		ExtentManager.getTest().pass("User-status search operation completed successfully");
+	}
 }
