@@ -8,7 +8,7 @@
 		<listener class-name="com.hrm.listeners.TestListener" />
 	</listeners>
 
-	<test name="HRM Automation Tests">
+	<test name="Independent Test Classes">
 		<classes>
 
 			<class name="com.hrm.tests.HomePageTest"></class>

@@ -12,7 +12,7 @@ public class LoginPage extends BasePage {
 	private By username = By.name("username");
 	private By password = By.name("password");
 	private By loginButton = By.xpath("//button[@type = 'submit']");
-	private By errorMsg = By.xpath("//p[text()= 'Invalid credentials']");
+	private By errorMsg = By.cssSelector(".oxd-alert-content-text");
 	private By requiredError = By.xpath("//span[text()= 'Required']");
 	private By loginText = By.xpath("//h5[text()= 'Login']");
 	
@@ -37,6 +37,10 @@ public class LoginPage extends BasePage {
 	
 	public boolean isErrorMsgVisible() {
 		return actionDriver.isDisplayed(errorMsg);
+	}
+	
+	public String getErrorMessage() {
+	    return driver.findElement(errorMsg).getText().trim();
 	}
 	
 	public boolean isRequiredErrorMsgVisible() {

@@ -76,9 +76,16 @@ public class LoginPageTest extends BaseClass {
 
 		ExtentManager.getTest().info("Login form submitted");
 
-		boolean errorDisplayed = loginPage.isErrorMsgVisible();
+		Assert.assertTrue(
+			    loginPage.isErrorMsgVisible(),
+			    "Expected error message was not displayed"
+			);
 
-		Assert.assertTrue(errorDisplayed, "Expected error message was not displayed for invalid username");
+			Assert.assertEquals(
+			    loginPage.getErrorMessage(),
+			    "Invalid credentials",
+			    "Unexpected error message"
+			);
 
 		ExtentManager.getTest().pass("Error message displayed for invalid username");
 	}
