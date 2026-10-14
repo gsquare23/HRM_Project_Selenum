@@ -1,9 +1,19 @@
+
 pipeline {
     agent any
+
+    tools {
+        jdk 'JDK21'
+        maven 'Maven386'
+    }
 
     options {
         timestamps()
         disableConcurrentBuilds()
+        buildDiscarder(logRotator(
+            numToKeepStr: '20',
+            artifactNumToKeepStr: '10'
+        ))
     }
 
     stages {
@@ -30,24 +40,42 @@ pipeline {
 
     post {
         always {
-            junit(
-                testResults: 'target/surefire-reports/TEST-*.xml',
-                allowEmptyResults: true
-            )
+            script {
+                // Publish TestNG/Surefire XML results.
+                junit(
+                    testResults: 'target/surefire-reports/TEST-*.xml',
+                    allowEmptyResults: true
+                )
 
-            archiveArtifacts(
-                artifacts: 'target/surefire-reports/**,test-output/**',
-                allowEmptyArchive: true,
-                fingerprint: true
-            )
+                // Keep test reports, screenshots and test output.
+                archiveArtifacts(
+                    artifacts: 'target/surefire-reports/**,test-output/**,screenshots/**',
+                    allowEmptyArchive: true,
+                    fingerprint: true
+                )
+
+                // Display the Extent HTML report on the build page.
+                publishHTML(target: [
+                    reportName: 'Extent Report',
+                    reportDir: 'test-output',
+                    reportFiles: 'ExtentReport.html',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: true
+                ])
+            }
         }
 
         success {
-            echo 'Selenium tests passed.'
+            echo 'Selenium test execution completed successfully.'
         }
 
         failure {
-            echo 'Build failed. Check Console Output and test reports.'
+            echo 'Build failed. Check Console Output, TestNG results and Extent Report.'
+        }
+
+        unstable {
+            echo 'Build is unstable. Review the test results.'
         }
     }
 }
