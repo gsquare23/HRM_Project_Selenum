@@ -48,21 +48,21 @@ pipeline {
                 )
 
                 // Keep test reports, screenshots and test output.
-                archiveArtifacts(
-                    artifacts: 'target/surefire-reports/**,test-output/**,screenshots/**',
-                    allowEmptyArchive: true,
-                    fingerprint: true
-                )
+               
+				archiveArtifacts(
+				    artifacts: 'target/surefire-reports/**,test-output/**,src/test/resources/ExtentReports/**,src/test/resources/Screenshots/**',
+				    allowEmptyArchive: true,
+				    fingerprint: true
+				)
 
-                // Display the Extent HTML report on the build page.
-                publishHTML(target: [
-                    reportName: 'Extent Report',
-                    reportDir: 'test-output',
-                    reportFiles: 'ExtentReport.html',
-                    keepAll: true,
-                    alwaysLinkToLastBuild: true,
-                    allowMissing: true
-                ])
+			publishHTML(target: [
+			    reportName: 'Extent Report',
+			    reportDir: 'src/test/resources/ExtentReports',
+			    reportFiles: 'ExtentReport.html',
+			    keepAll: true,
+			    alwaysLinkToLastBuild: true,
+			    allowMissing: true
+		])
             }
         }
 
