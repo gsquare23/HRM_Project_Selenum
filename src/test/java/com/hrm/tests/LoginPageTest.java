@@ -25,23 +25,17 @@ public class LoginPageTest extends BaseClass {
 		loginPage = new LoginPage();
 		homePage = new HomePage();
 
-		 System.out.println(
-		            "Currently executing test case: " + method.getName()
-		            + " | Thread: " + Thread.currentThread().getName()
-		    );
+		System.out.println("Currently executing test case: " + method.getName() + " | Thread: "
+				+ Thread.currentThread().getName());
 
-		
 	}
 
-	@Test(description = "Login with valid username and password --- Positive",
-			dataProvider = "validLoginData",
-		    dataProviderClass = DataProviders.class
-		    )
+	@Test(description = "Login with valid username and password --- Positive", dataProvider = "validLoginData", dataProviderClass = DataProviders.class)
 	public void validLoginTest(String username, String password) {
-		
-		ExtentManager.getTest().info("Starting valid login test"); 
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Starting valid login test");
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 //		String username = ConfigReader.getProperty("username");
 //		String password = ConfigReader.getProperty("password");
@@ -59,14 +53,12 @@ public class LoginPageTest extends BaseClass {
 		ExtentManager.getTest().pass("Valid login successful. Dashboard is displayed");
 	}
 
-	@Test(description = "Login with invalid username --- Negative", 
-			dataProvider = "inValidUsername",
-		    dataProviderClass = DataProviders.class)
+	@Test(description = "Login with invalid username --- Negative", dataProvider = "inValidUsername", dataProviderClass = DataProviders.class)
 	public void inValidUsername(String username, String password) {
 
 		ExtentManager.getTest().info("Starting invalid username test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		System.out.println(Thread.currentThread().getName() + " | " + Thread.currentThread().getId());
 
@@ -76,29 +68,20 @@ public class LoginPageTest extends BaseClass {
 
 		ExtentManager.getTest().info("Login form submitted");
 
-		Assert.assertTrue(
-			    loginPage.isErrorMsgVisible(),
-			    "Expected error message was not displayed"
-			);
+		Assert.assertTrue(loginPage.isErrorMsgVisible(), "Expected error message was not displayed");
 
-			Assert.assertEquals(
-			    loginPage.getErrorMessage(),
-			    "Invalid credentials",
-			    "Unexpected error message"
-			);
+		Assert.assertEquals(loginPage.getErrorMessage(), "Invalid credentials", "Unexpected error message");
 
 		ExtentManager.getTest().pass("Error message displayed for invalid username");
 	}
 
-	@Test(description = "Login with invalid password --- Negative",
-			dataProvider = "inValidPassword",
-		    dataProviderClass = DataProviders.class)
-	
+	@Test(description = "Login with invalid password --- Negative", dataProvider = "inValidPassword", dataProviderClass = DataProviders.class)
+
 	public void inValidPassword(String username, String password) {
 
 		ExtentManager.getTest().info("Starting invalid password test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		System.out.println(Thread.currentThread().getName() + " | " + Thread.currentThread().getId());
 
@@ -115,14 +98,12 @@ public class LoginPageTest extends BaseClass {
 		ExtentManager.getTest().pass("Error message displayed for invalid password");
 	}
 
-	@Test(description = "Login with both username and password blank --- Negative",
-			dataProvider = "blankUsernameAndBlankPassword",
-		    dataProviderClass = DataProviders.class)
+	@Test(description = "Login with both username and password blank --- Negative", dataProvider = "blankUsernameAndBlankPassword", dataProviderClass = DataProviders.class)
 	public void blankUsernameAndBlankPassword(String username, String password) {
 
 		ExtentManager.getTest().info("Starting blank credentials test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		loginPage.login(username, password);
 
@@ -136,14 +117,12 @@ public class LoginPageTest extends BaseClass {
 		ExtentManager.getTest().pass("Required validation displayed for blank credentials");
 	}
 
-	@Test(description = "Login with username blank --- Negative",
-			dataProvider = "blankUsernameAndPassword",
-		    dataProviderClass = DataProviders.class)
+	@Test(description = "Login with username blank --- Negative", dataProvider = "blankUsernameAndPassword", dataProviderClass = DataProviders.class)
 	public void blankUsernameAndPassword(String username, String password) {
 
 		ExtentManager.getTest().info("Starting blank username test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		loginPage.login(username, password);
 
@@ -156,14 +135,12 @@ public class LoginPageTest extends BaseClass {
 		ExtentManager.getTest().pass("Username required validation displayed");
 	}
 
-	@Test(description = "Login with password blank --- Negative",
-			dataProvider = "usernameAndBlankPassword",
-		    dataProviderClass = DataProviders.class)
+	@Test(description = "Login with password blank --- Negative", dataProvider = "usernameAndBlankPassword", dataProviderClass = DataProviders.class)
 	public void usernameAndBlankPassword(String username, String password) {
 
 		ExtentManager.getTest().info("Starting blank password test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		loginPage.login(username, password);
 
@@ -180,8 +157,8 @@ public class LoginPageTest extends BaseClass {
 	public void isPasswordMasked() {
 
 		ExtentManager.getTest().info("Starting password masking test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		boolean passwordMasked = loginPage.isPasswordMasked();
 
@@ -192,14 +169,12 @@ public class LoginPageTest extends BaseClass {
 		ExtentManager.getTest().pass("Password field is masked correctly");
 	}
 
-	@Test(description = "Verify user can logout --- Functional",
-			dataProvider = "validLoginData",
-		    dataProviderClass = DataProviders.class)
+	@Test(description = "Verify user can logout --- Functional", dataProvider = "validLoginData", dataProviderClass = DataProviders.class)
 	public void validLogoutTest(String username, String password) {
 
 		ExtentManager.getTest().info("Starting logout test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		ExtentManager.getTest().info("Entering valid login credentials");
 
@@ -222,14 +197,12 @@ public class LoginPageTest extends BaseClass {
 		ExtentManager.getTest().pass("Logout successful and login page displayed");
 	}
 
-	@Test(description = "Verify user cannot access protected page after logout --- Security/Functional",
-			dataProvider = "validLoginData",
-		    dataProviderClass = DataProviders.class)
+	@Test(description = "Verify user cannot access protected page after logout --- Security/Functional", dataProvider = "validLoginData", dataProviderClass = DataProviders.class)
 	public void verifyProtectedPageAccessAfterLogout(String username, String password) {
 
 		ExtentManager.getTest().info("Starting protected page access test");
-		
-		ExtentManager.getTest().info( "Thread: " + Thread.currentThread().getName() );
+
+		ExtentManager.getTest().info("Thread: " + Thread.currentThread().getName());
 
 		ExtentManager.getTest().info("Entering valid login credentials");
 
@@ -246,18 +219,19 @@ public class LoginPageTest extends BaseClass {
 		homePage.clickLogout();
 
 		Assert.assertTrue(loginPage.isLoginHeadingVisible(), "Login page is not displayed after logout");
-		
+
 		ExtentManager.getTest().info("Logout successful. Attempting browser back navigation");
 
 		loginPage.navigateBack();
-		
+
 		ExtentManager.getTest().info("Refreshing page ");
-		
+
 		loginPage.pageRefresh();
 
 		boolean dashboardDisplayed = homePage.isDashboardDisplayed();
 
-		Assert.assertFalse(dashboardDisplayed, "Dashboard is displayed after logout and refres; protected page may be accessible");
+		Assert.assertFalse(dashboardDisplayed,
+				"Dashboard is displayed after logout and refres; protected page may be accessible");
 
 		ExtentManager.getTest().pass("Protected dashboard was not accessible after logout");
 	}

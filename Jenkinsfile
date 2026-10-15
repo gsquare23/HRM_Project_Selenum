@@ -50,7 +50,7 @@ pipeline {
                 // Keep test reports, screenshots and test output.
                
 				archiveArtifacts(
-				    artifacts: 'target/surefire-reports/**,test-output/**,src/test/resources/ExtentReports/**,src/test/resources/Screenshots/**',
+				    artifacts: 'target/surefire-reports/**,test-output/**,src/test/resources/ExtentReports/**,screenshots/**',
 				    allowEmptyArchive: true,
 				    fingerprint: true
 				)
